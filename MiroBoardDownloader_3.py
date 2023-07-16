@@ -1,4 +1,4 @@
-import pyautogui, time, subprocess
+import pyautogui, time, os, pyvips
 from PIL import ImageGrab, Image
 
 path = f"d:/a little bit of programming/programming/studia/semestr III/1_PROJECTS/MiroBoardDownloader/screenshot/"
@@ -55,6 +55,29 @@ def border(ss, colors):
     else:
         return 0
 
+def upload_images_from_folder(path_board):
+    input_images = []
+
+    # Get a list of all files in the folder
+    files = os.listdir(path_board)
+
+    # Filter and sort the files based on numerical order
+    sorted_files = sorted(files, key=lambda x: int(x.split("_")[0].replace("BoardDownloadTest", "")))
+
+    # Iterate over each file in the sorted list
+    for file in sorted_files:
+        # Check if the file is an image
+        if file.endswith(".png") or file.endswith(".jpg"):
+            # Create the image path by concatenating the folder path with the file name
+            image_path = os.path.join(path_board, file)
+
+            # Load the image and add it to the input_images list
+            image = pyvips.Image.new_from_file(image_path)
+            input_images.append(image)
+
+    return input_images
+
+
 def scan_manual(width, height):
     w = 1
     h = 1
@@ -82,7 +105,7 @@ def scan_manual(width, height):
     # print(f"height is {height}")
     # print(f"width is {width}")
 
-def stirpes_merge(): # screenshot merge - stripes
+def stirpes_merge(width, height): # screenshot merge - stripes
     ssID = 0
     ss = Image.open(f"{path}screenshot_{ssID}.png")
     ss_size = ss.size
@@ -96,26 +119,22 @@ def stirpes_merge(): # screenshot merge - stripes
                 ss = Image.open(f"{path}screenshot_{ssID}.png")
                 BoardDownload.paste(ss,((width-1-j)*ss_size[0],0))
             ssID=ssID+1
-        BoardDownload.save(f"{path_board}BoardDownloadTest{i}_.png","PNG")
+        BoardDownload.save(f"{path_board}BoardDownloadTest{i}.png","PNG")
     print("Stripes merge finished succesfully!")
 
 def final_merge(height):
     # Screenshot merge - final
-    input_images = [f"{path_board}BoardDownloadTest0_.png", f"{path_board}BoardDownloadTest1_.png"]
-    output_image = f"{path_final}temp0.png"
-    output_vimage = pyvips.Image.arrayjoin(input_images, across=1, shim=0)
+    input_images = upload_images_from_folder(path_board)
+    output_image = f"{path_final}FinalScan.png"
+    input_images.append(pyvips.Image.new_from_file(f"{path_board}BoardDownloadTest{height}_.png"))
+    output_vimage = pyvips.Image.arrayjoin(input_images, across=1, shim=0, background=[0, 0, 0])
     output_vimage.write_to_file(output_image)
-
-    for i in range(0, height - 2):
-        input_images = [f"{path_final}temp{i}.png", f"{path_board}BoardDownloadTest{i + 2}_.png"]
-        output_image = f"{path_final}temp{i + 1}.png"
-        output_vimage = pyvips.Image.arrayjoin(input_images, across=1, shim=0)
-        output_vimage.write_to_file(output_image)
-        file_path = f"{path_final}temp{i}.png"
-        os.remove(file_path)
+    #file_path = f"{path_final}temp{i}.png"
+    #os.remove(file_path)
     print("Done!")
 
-final_merge(10)
+final_merge(13)
+
 
 
 
