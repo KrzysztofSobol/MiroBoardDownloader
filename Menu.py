@@ -1,5 +1,9 @@
+from tkinter import filedialog
+import tkinter as tk
 import customtkinter as ctk
 from customtkinter import CTkButton, CTkEntry, CTkLabel
+
+
 
 # Button function for "Manual" button
 def button_clicked():
@@ -22,7 +26,19 @@ def button_clicked():
 
 # Button function for "Auto" button
 def auto_button_clicked():
+    select_folder()
     print("Auto button clicked!")
+
+# folder selection
+def select_folder():
+    root = tk.Tk()
+    root.withdraw()  # Hide the main window
+
+    folder_path = filedialog.askdirectory(title="Select Folder")  # Open folder selection dialog
+
+    if folder_path:
+        print("Selected folder path:", folder_path)
+        # You can do further processing with the selected folder path here
 
 # System settings
 ctk.set_appearance_mode("System")
@@ -33,7 +49,7 @@ app = ctk.CTk()
 app.geometry("720x480")
 app.title("Miro Board Downloader")
 
-# Create the X and Y input fields (initially hidden)
+# Create the X and Y input fields
 x_label = CTkLabel(app, text="Width")
 x_entry = CTkEntry(app)
 y_label = CTkLabel(app, text="Height")

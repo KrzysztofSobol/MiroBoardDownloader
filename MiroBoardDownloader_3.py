@@ -1,5 +1,6 @@
-import pyautogui, time, os, pyvips
+import pyautogui, time, os, pyvips, tkinter as tk
 from PIL import ImageGrab, Image
+from tkinter import filedialog
 
 path = f"d:/a little bit of programming/programming/studia/semestr III/1_PROJECTS/MiroBoardDownloader/screenshot/"
 path_board = f"D:/a little bit of programming/programming/studia/semestr III/1_PROJECTS/MiroBoardDownloader/BoardDownload/"
@@ -120,6 +121,9 @@ def final_merge(height): # Screenshot merge - final
     output_vimage = pyvips.Image.arrayjoin(input_images, across=1, shim=0, background=[0, 0, 0])
     output_vimage.write_to_file(output_image)
     print("Done!")
+
+def save_path():
+
 
 
 
