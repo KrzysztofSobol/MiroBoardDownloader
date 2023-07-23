@@ -1,7 +1,8 @@
-from tkinter import filedialog, messagebox
 import tkinter as tk
 import customtkinter as ctk
 from customtkinter import CTkButton, CTkEntry, CTkLabel
+from tkinter import filedialog
+import MiroSystem
 
 
 
@@ -16,6 +17,7 @@ def manual_button_clicked():
         y_entry.place_forget()
         fields_visible = False
         button_auto.place(y=50)
+
     else:
         x_label.place(x=10, y=50)
         x_entry.place(x=55, y=50)
@@ -37,7 +39,11 @@ def start_button_clicked():
             app.after(1000, update_text, count - 1)
         else:
             # countdown is finished, minimize the window
-            app.iconify()
+            #app.iconify()
+            x = x_entry.get()
+            y = y_entry.get()
+            MiroSystem.scan_manual(x, y)
+            return
     # start the countdown
     update_text(3)
 

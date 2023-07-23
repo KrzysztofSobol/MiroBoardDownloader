@@ -57,23 +57,27 @@ def border(ss, colors):
     else:
         return 0
 
-def upload_images_from_folder(path_board):
+def upload_images_from_folder(path):
     input_images = []
-    files = os.listdir(path_board)
-    sorted_files = sorted(files, key=lambda x: int(x.split("_")[0].replace("BoardDownloadTest", "")))
+    files = os.listdir(path)
+
+    # Use a lambda function with a try-except block to handle cases where split fails
+    sorted_files = sorted(files, key=lambda x: int(x.split("screenshot_")[1].split(".png")[0]) if "screenshot_" in x else 0)
 
     for file in sorted_files:
         if file.endswith(".png"):
-            image_path = os.path.join(path_board, file)
+            image_path = os.path.join(path, file)
             image = pyvips.Image.new_from_file(image_path)
             input_images.append(image)
     return input_images
+
 
 
 def scan_manual(width, height):
     w = 1
     h = 1
     ssID = 0
+    number = 0
     screenshot(ssID)
     ssID+=1
     while True:
@@ -83,15 +87,19 @@ def scan_manual(width, height):
                 break
             if((h-1)%2)==0:
                 GoRight(ssID)
+                number = number + 1
+                print(number)
             else:
                 GoLeft(ssID)
-            ssID=ssID+1
-            w = w + 1
+                number = number + 1
+                print(number)
+            ssID+=1
+            w+=1
         if(h==height):
             break
         GoDown(ssID)
         ssID=ssID+1
-        h = h + 1
+        h+=1
     #print("Scan finished succesfully!")
     # width=int(math.sqrt(width))
     # print(f"height is {height}")
@@ -117,12 +125,42 @@ def stirpes_merge(width, height): # screenshot merge - stripes
 def final_merge(height): # Screenshot merge - final
     input_images = upload_images_from_folder(path_board)
     output_image = f"{path_final}FinalScan.png"
-    input_images.append(pyvips.Image.new_from_file(f"{path_board}BoardDownloadTest{height}_.png"))
+    input_images.append(pyvips.Image.new_from_file(f"{path_board}BoardDownloadTest{height-1}.png"))
     output_vimage = pyvips.Image.arrayjoin(input_images, across=1, shim=0, background=[0, 0, 0])
     output_vimage.write_to_file(output_image)
     print("Done!")
 
-def save_path():
+def combine_into_2x2_square():
+    input_images = upload_images_from_folder(path)
+
+    # Optionally, resize the input images to a specific size
+    # For example, to resize each image to 200x200 pixels:
+    # input_images = [image.resize(200, 200) for image in input_images]
+
+    height, width = 2, 2
+    num_images = height * width
+
+    # Rearrange the images in a snake-like pattern
+    rearranged_images = []
+    for h in range(height):
+        for w in range(width):
+            if h % 2 == 0:
+                # Even rows: go left-to-right
+                index = h * width + w
+            else:
+                # Odd rows: go right-to-left
+                index = (h + 1) * width - (w + 1)
+            rearranged_images.append(input_images[index])
+
+    output_image = f"{path_final}FinalScan.png"
+    output_vimage = pyvips.Image.arrayjoin(rearranged_images, across=width, shim=0, background=[0, 0, 0])
+    output_vimage.write_to_file(output_image)
+    print("Done!")
+
+scan_manual(10,10)
+combine_into_2x2_square()
+
+
 
 
 
