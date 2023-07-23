@@ -1,11 +1,10 @@
-import pyautogui, time, os, pyvips, tkinter as tk
-from PIL import ImageGrab, Image
-from tkinter import filedialog
+import pyautogui, time, os, pyvips
+from PIL import ImageGrab
+
 
 path = f"d:/a little bit of programming/programming/studia/semestr III/1_PROJECTS/MiroBoardDownloader/screenshot/"
 path_board = f"D:/a little bit of programming/programming/studia/semestr III/1_PROJECTS/MiroBoardDownloader/BoardDownload/"
 path_final = f"D:/a little bit of programming/programming/studia/semestr III/1_PROJECTS/MiroBoardDownloader/BDT/"
-move_time = 0.5
 #colors_vertical = [(138, 1, 249), (1, 253, 126), (251, 1, 164), (3, 233, 251), (255, 249, 1)]
 #colors_parallel = [(0, 0, 255), (99, 111, 51), (255, 196, 255), (255, 18, 65), (192, 255, 65)]
 
@@ -15,6 +14,7 @@ def screenshot(i):
     ss.save(f"{path}{file_name}")
 
 def GoDown(ssID):
+    screenshot(ssID)
     pyautogui.moveTo(1500, 1020)
     pyautogui.mouseDown(button='left')
     time.sleep(0.5)
@@ -22,9 +22,9 @@ def GoDown(ssID):
     time.sleep(0.5)
     pyautogui.mouseUp(button='left')
     time.sleep(1)
-    screenshot(ssID)
 
 def GoRight(ssID):
+    screenshot(ssID)
     pyautogui.moveTo(1910, 542)
     pyautogui.mouseDown(button='left')
     time.sleep(0.5)
@@ -32,9 +32,9 @@ def GoRight(ssID):
     time.sleep(0.5)
     pyautogui.mouseUp(button='left')
     time.sleep(1)
-    screenshot(ssID)
 
 def GoLeft(ssID):
+    screenshot(ssID)
     pyautogui.moveTo(57, 542)
     pyautogui.mouseDown(button='left')
     time.sleep(0.5)
@@ -42,8 +42,8 @@ def GoLeft(ssID):
     time.sleep(0.5)
     pyautogui.mouseUp(button='left') 
     time.sleep(1)
-    screenshot(ssID)
 
+# function that finds a border in a screenshot
 def border(ss, colors):
     screenshot_array = ss.load()
     colors_found = set()
@@ -57,11 +57,11 @@ def border(ss, colors):
     else:
         return 0
 
+# function for uploading and sorting all of the screenshots into an array
 def upload_images_from_folder(path):
     input_images = []
     files = os.listdir(path)
 
-    # Use a lambda function with a try-except block to handle cases where split fails
     sorted_files = sorted(files, key=lambda x: int(x.split("screenshot_")[1].split(".png")[0]) if "screenshot_" in x else 0)
 
     for file in sorted_files:
@@ -71,84 +71,33 @@ def upload_images_from_folder(path):
             input_images.append(image)
     return input_images
 
-
-
+# function to scan an X by Y area on the board
 def scan_manual(width, height):
-    w = 1
-    h = 1
     ssID = 0
-    number = 0
-    screenshot(ssID)
-    ssID+=1
-    while True:
-        while True:
-            if(w==width):
-                w = 1
-                break
-            if((h-1)%2)==0:
+    for h in range(0, height):
+        for w in range(1, width):
+            if h % 2 == 0:
                 GoRight(ssID)
-                number = number + 1
-                print(number)
             else:
                 GoLeft(ssID)
-                number = number + 1
-                print(number)
-            ssID+=1
-            w+=1
-        if(h==height):
-            break
-        GoDown(ssID)
-        ssID=ssID+1
-        h+=1
-    #print("Scan finished succesfully!")
-    # width=int(math.sqrt(width))
-    # print(f"height is {height}")
-    # print(f"width is {width}")
+            ssID += 1
+        if h < height:
+            GoDown(ssID)
+            ssID += 1
 
-def stirpes_merge(width, height): # screenshot merge - stripes
-    ssID = 0
-    ss = Image.open(f"{path}screenshot_{ssID}.png")
-    ss_size = ss.size
-    BoardDownload = Image.new('RGB',(width*ss_size[0], ss_size[1]), (250,250,250))
-    for i in range(0,height):
-        for j in range(0,width):
-            if(i%2)==0:
-                ss = Image.open(f"{path}screenshot_{ssID}.png")
-                BoardDownload.paste(ss,(j*ss_size[0],0))
-            else:
-                ss = Image.open(f"{path}screenshot_{ssID}.png")
-                BoardDownload.paste(ss,((width-1-j)*ss_size[0],0))
-            ssID=ssID+1
-        BoardDownload.save(f"{path_board}BoardDownloadTest{i}.png","PNG")
-    print("Stripes merge finished succesfully!")
-
-def final_merge(height): # Screenshot merge - final
-    input_images = upload_images_from_folder(path_board)
-    output_image = f"{path_final}FinalScan.png"
-    input_images.append(pyvips.Image.new_from_file(f"{path_board}BoardDownloadTest{height-1}.png"))
-    output_vimage = pyvips.Image.arrayjoin(input_images, across=1, shim=0, background=[0, 0, 0])
-    output_vimage.write_to_file(output_image)
-    print("Done!")
-
-def combine_into_2x2_square():
+# function to merge all of the screenshots into one big image
+def final_merge(height, width):
     input_images = upload_images_from_folder(path)
 
-    # Optionally, resize the input images to a specific size
-    # For example, to resize each image to 200x200 pixels:
-    # input_images = [image.resize(200, 200) for image in input_images]
-
-    height, width = 2, 2
-    num_images = height * width
-
-    # Rearrange the images in a snake-like pattern
+    # Rearrange the images in a snake lookin pattern
     rearranged_images = []
     for h in range(height):
         for w in range(width):
             if h % 2 == 0:
-                # Even rows: go left-to-right
+                # Even rows: left-to-right
                 index = h * width + w
             else:
-                # Odd rows: go right-to-left
+                # Odd rows: right-to-left
                 index = (h + 1) * width - (w + 1)
             rearranged_images.append(input_images[index])
 
@@ -156,9 +105,6 @@ def combine_into_2x2_square():
     output_vimage = pyvips.Image.arrayjoin(rearranged_images, across=width, shim=0, background=[0, 0, 0])
     output_vimage.write_to_file(output_image)
     print("Done!")
-
-scan_manual(10,10)
-combine_into_2x2_square()
 
 
 
