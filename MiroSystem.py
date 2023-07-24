@@ -1,5 +1,6 @@
 import pyautogui, time, os, pyvips
 from PIL import ImageGrab
+import pygetwindow as gw
 
 
 path = f"d:/a little bit of programming/programming/studia/semestr III/1_PROJECTS/MiroBoardDownloader/screenshot/"
@@ -8,13 +9,13 @@ path_final = f"D:/a little bit of programming/programming/studia/semestr III/1_P
 #colors_vertical = [(138, 1, 249), (1, 253, 126), (251, 1, 164), (3, 233, 251), (255, 249, 1)]
 #colors_parallel = [(0, 0, 255), (99, 111, 51), (255, 196, 255), (255, 18, 65), (192, 255, 65)]
 
-def screenshot(i):
+def Screenshot(i):
     file_name = f"screenshot_{i}.png"
     ss = ImageGrab.grab(bbox=(57,58,1910,1020))  
     ss.save(f"{path}{file_name}")
 
 def GoDown(ssID):
-    screenshot(ssID)
+    Screenshot(ssID)
     pyautogui.moveTo(1500, 1020)
     pyautogui.mouseDown(button='left')
     time.sleep(0.5)
@@ -24,7 +25,7 @@ def GoDown(ssID):
     time.sleep(1)
 
 def GoRight(ssID):
-    screenshot(ssID)
+    Screenshot(ssID)
     pyautogui.moveTo(1910, 542)
     pyautogui.mouseDown(button='left')
     time.sleep(0.5)
@@ -34,7 +35,7 @@ def GoRight(ssID):
     time.sleep(1)
 
 def GoLeft(ssID):
-    screenshot(ssID)
+    Screenshot(ssID)
     pyautogui.moveTo(57, 542)
     pyautogui.mouseDown(button='left')
     time.sleep(0.5)
@@ -44,7 +45,7 @@ def GoLeft(ssID):
     time.sleep(1)
 
 # function that finds a border in a screenshot
-def border(ss, colors):
+def Border(ss, colors):
     screenshot_array = ss.load()
     colors_found = set()
     for y in range(ss.size[1]):
@@ -58,7 +59,7 @@ def border(ss, colors):
         return 0
 
 # function for uploading and sorting all of the screenshots into an array
-def upload_images_from_folder(path):
+def Upload_images_from_folder(path):
     input_images = []
     files = os.listdir(path)
 
@@ -71,8 +72,17 @@ def upload_images_from_folder(path):
             input_images.append(image)
     return input_images
 
+# function that checks if MBD is overlapping with a https://miro.com
+def DoesOverlap(URL):
+    window_list = gw.getWindowsWithTitle(URL)
+    if len(window_list) > 0:
+        time.sleep(1)
+        return True
+    else:
+        return False
+
 # function to scan an X by Y area on the board
-def scan_manual(width, height):
+def ScanManual(width, height):
     ssID = 0
     for h in range(0, height):
         for w in range(1, width):
@@ -86,8 +96,8 @@ def scan_manual(width, height):
             ssID += 1
 
 # function to merge all of the screenshots into one big image
-def final_merge(height, width):
-    input_images = upload_images_from_folder(path)
+def FinalMerge(height, width):
+    input_images = Upload_images_from_folder(path)
 
     # Rearrange the images in a snake lookin pattern
     rearranged_images = []

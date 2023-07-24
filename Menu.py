@@ -38,11 +38,19 @@ def start_button_clicked():
         if count > 0:
             app.after(1000, update_text, count - 1)
         else:
-            # countdown is finished, minimize the window
-            #app.iconify()
-            x = x_entry.get()
-            y = y_entry.get()
-            MiroSystem.scan_manual(x, y)
+            # countdown is finished
+            if MiroSystem.DoesOverlap("https://miro.com/"):
+                app.iconify()
+            x_str = x_entry.get()
+            y_str = y_entry.get()
+            try:
+                x = int(x_str)
+                y = int(y_str)
+            except ValueError:
+                print("ERROR: enter valid integers for x and y.")
+                return
+            MiroSystem.ScanManual(x, y)
+            MiroSystem.FinalMerge(x, y)
             return
     # start the countdown
     update_text(3)
