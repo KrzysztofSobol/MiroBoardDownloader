@@ -28,7 +28,6 @@ def manual_button_clicked():
 
 # Button function for "Auto" button
 def auto_button_clicked():
-    select_folder()
     print("Auto button clicked!")
 
 # Button function for "Start" button
@@ -54,6 +53,43 @@ def start_button_clicked():
             return
     # start the countdown
     update_text(3)
+
+# Button function for "Settings" button
+def settings_button_clicked():
+    open_settings_window()
+
+# Button function for "accept" button in settings window
+def accept_button_clicked():
+    print("pussy")
+
+# Button function for "cancle" button in settings window
+def cancle_button_clicked():
+    print("pussy")
+
+# Open settings window
+def open_settings_window():
+    # "Settings" app frame and settings
+    settings_window = ctk.CTkToplevel()
+    settings_window.geometry("320x480")
+    settings_window.title("Settings")
+    settings_window.transient(app)
+    settings_window.grab_set()
+
+    # "Settings" app frame buttons
+    # "Accept" button
+    button_accept = CTkButton(settings_window, text="Accept", command=accept_button_clicked)
+    button_accept.place(x=10, y=440)
+
+    button_cancle = CTkButton(settings_window, text="Cancle", command=cancle_button_clicked)
+    button_cancle.place(x=170, y=440)
+
+
+
+
+
+
+
+
 
 # Folder selection
 def select_folder():
@@ -90,6 +126,10 @@ button_auto.place(x=10, y=50)
 # "Start" button
 button_start = CTkButton(app, text="Start", command=start_button_clicked)
 button_start.place(x=570, y=440)
+
+# "Settings" button
+button_settings = CTkButton(app, text="Settings", command=settings_button_clicked)
+button_settings.place(x=10, y=440)
 
 # Flag to track visibility state
 fields_visible = False
