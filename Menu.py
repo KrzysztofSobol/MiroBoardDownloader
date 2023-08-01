@@ -66,11 +66,14 @@ def accept_button_clicked():
 def cancle_button_clicked():
     print("pussy")
 
+def findpath_button_clicked():
+    select_folder()
+
 # Open settings window
 def open_settings_window():
     # "Settings" app frame and settings
     settings_window = ctk.CTkToplevel()
-    settings_window.geometry("320x480")
+    settings_window.geometry("410x480")
     settings_window.title("Settings")
     settings_window.transient(app)
     settings_window.grab_set()
@@ -79,9 +82,30 @@ def open_settings_window():
     # "Accept" button
     button_accept = CTkButton(settings_window, text="Accept", command=accept_button_clicked)
     button_accept.place(x=10, y=440)
-
+    # "Cancle" button
     button_cancle = CTkButton(settings_window, text="Cancle", command=cancle_button_clicked)
-    button_cancle.place(x=170, y=440)
+    button_cancle.place(x=260, y=440)
+    # "Find Path" button
+    button_findpath = CTkButton(settings_window, width=50, height=40, text="set", command=findpath_button_clicked)
+    button_findpath.place(x=350, y=40)
+    button_findpath = CTkButton(settings_window, width=50, height=40, text="set", command=findpath_button_clicked)
+    button_findpath.place(x=350, y=120)
+
+    # "Settings" app frame text input fields
+    # text field for "screenshot" path
+    InputText_screenshotpath = CTkEntry(settings_window, width=340, height=40)
+    InputText_screenshotpath.place(x=10, y=40)
+    # text field for "final" path
+    InputText_finalpath = CTkEntry(settings_window, width=340, height=40)
+    InputText_finalpath.place(x=10, y=120)
+
+    # "Settings" app frame text
+    # text field for screenshots
+    text_screenshot = CTkLabel(settings_window, text="Path to the folder that will store all of the single screenshots")
+    text_screenshot.place(x=10, y=10)
+    # text field for final merged screenshot
+    text_final = CTkLabel(settings_window, text="Path to the folder that will store a final scan")
+    text_final.place(x=10, y=90)
 
 
 
