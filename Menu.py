@@ -3,7 +3,14 @@ import customtkinter as ctk
 from customtkinter import CTkButton, CTkEntry, CTkLabel
 from tkinter import filedialog
 import MiroSystem, os
-data_path = "D:/a little bit of programming/programming/studia/semestr III/1_PROJECTS/MiroBoardDownloader/data.txt"
+path = "D:/a little bit of programming/programming/studia/semestr III/1_PROJECTS/MiroBoardDownloader/screenshot"
+
+# Load in the paths to the folders from a txt file
+def load_paths():
+    global path, path_final, data_path
+    data_path = "D:/a little bit of programming/programming/studia/semestr III/1_PROJECTS/MiroBoardDownloader/data.txt"
+    path = MiroSystem.get_line_from_file(data_path, 1)
+    path_final = MiroSystem.get_line_from_file(data_path, 2)
 
 # Save data to the txt file
 def write_to_txt_file():
@@ -11,21 +18,19 @@ def write_to_txt_file():
     filename = "data.txt"
     file_path = os.path.join(current_directory, filename)
 
-    with open(file_path, 'w') as file:
-        file.write(InputText_screenshotpath.get() + '\n')
-        file.write(InputText_finalpath.get() + '\n')
+    screenshotpath = MiroSystem.get_line_from_file(file_path, 1)
+    finalpath = MiroSystem.get_line_from_file(file_path, 2)
 
-# Read a certian x line from a file
-def get_line_from_file(file_path, line_number):
-    try:
-        with open(file_path, 'r') as file:
-            lines = file.readlines()
-            if 1 <= line_number <= len(lines):
-                return lines[line_number - 1].strip()  # -1 to adjust for zero-based index and strip newline characters
-            else:
-                return "Line number out of range."
-    except FileNotFoundError:
-        return "File not found."
+    # open file in write mode to update the content
+    with open(file_path, 'w') as file:
+        if len(InputText_screenshotpath.get()) > 0:
+            screenshotpath = InputText_screenshotpath.get()
+
+        if len(InputText_finalpath.get()) > 0:
+            finalpath = InputText_finalpath.get()
+
+        file.write(screenshotpath + '\n')
+        file.write(finalpath + '\n')
 
 # Button function for "Manual" button
 def manual_button_clicked():
@@ -49,6 +54,7 @@ def manual_button_clicked():
 
 # Button function for "Auto" button
 def auto_button_clicked():
+    print("if1" + MiroSystem.get_line_from_file(data_path, 1))
     print("Auto button clicked!")
 
 # Button function for "Start" button
@@ -69,8 +75,9 @@ def start_button_clicked():
             except ValueError:
                 print("ERROR: enter valid integers for x and y.")
                 return
-            MiroSystem.ScanManual(x, y)
-            MiroSystem.FinalMerge(x, y)
+            print(path)
+            MiroSystem.ScanManual(x, y, path)
+            MiroSystem.FinalMerge(x, y, path, path_final)
             return
     # start the countdown
     update_text(3)
@@ -88,11 +95,13 @@ def open_settings_window():
         root.withdraw()
         folder_path = filedialog.askdirectory(title="Select Folder")
         if folder_path:
+            folder_path += "/"
             return folder_path
 
     # Button function for "accept" button in settings window
     def accept_button_clicked():
         write_to_txt_file()
+        load_paths()
         settings_window.destroy()
 
     # Button function for "cancle" button in settings window
@@ -115,10 +124,10 @@ def open_settings_window():
     # "Settings" app frame text input fields
     global InputText_screenshotpath, InputText_finalpath
     # text field for "screenshot" path
-    InputText_screenshotpath = CTkEntry(settings_window, width=340, height=40, placeholder_text=get_line_from_file(data_path,1))
+    InputText_screenshotpath = CTkEntry(settings_window, width=340, height=40, placeholder_text=MiroSystem.get_line_from_file(data_path,1))
     InputText_screenshotpath.place(x=10, y=40)
     # text field for "final" path
-    InputText_finalpath = CTkEntry(settings_window, width=340, height=40, placeholder_text=get_line_from_file(data_path,2))
+    InputText_finalpath = CTkEntry(settings_window, width=340, height=40, placeholder_text=MiroSystem.get_line_from_file(data_path,2))
     InputText_finalpath.place(x=10, y=120)
 
     # "Settings" app frame buttons
@@ -177,4 +186,8 @@ button_settings.place(x=10, y=440)
 fields_visible = False
 
 # Run app
-app.mainloop()
+def on_app_start():
+    load_paths()
+    app.mainloop()
+
+on_app_start()
