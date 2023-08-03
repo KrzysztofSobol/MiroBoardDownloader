@@ -3,14 +3,13 @@ import customtkinter as ctk
 from customtkinter import CTkButton, CTkEntry, CTkLabel
 from tkinter import filedialog
 import MiroSystem, os
-path = "D:/a little bit of programming/programming/studia/semestr III/1_PROJECTS/MiroBoardDownloader/screenshot"
 
 # Load in the paths to the folders from a txt file
 def load_paths():
     global path, path_final, data_path
     data_path = "D:/a little bit of programming/programming/studia/semestr III/1_PROJECTS/MiroBoardDownloader/data.txt"
-    path = MiroSystem.get_line_from_file(data_path, 1)
-    path_final = MiroSystem.get_line_from_file(data_path, 2)
+    path = MiroSystem.get_line_from_file(data_path, 1) # Path to the "screenshots" folder
+    path_final = MiroSystem.get_line_from_file(data_path, 2) # Path to the folder containing a final scan
 
 # Save data to the txt file
 def write_to_txt_file():
