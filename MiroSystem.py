@@ -2,10 +2,7 @@ import pyautogui, time, os, pyvips
 from PIL import ImageGrab
 import pygetwindow as gw
 
-#colors_vertical = [(138, 1, 249), (1, 253, 126), (251, 1, 164), (3, 233, 251), (255, 249, 1)]
-#colors_parallel = [(0, 0, 255), (99, 111, 51), (255, 196, 255), (255, 18, 65), (192, 255, 65)]
-
-def Screenshot(i,path):
+def Screenshot(i, path):
     file_name = f"screenshot_{i}.png"
     ss = ImageGrab.grab(bbox=(57,58,1910,1020))  
     ss.save(f"{path}{file_name}")
@@ -66,7 +63,7 @@ def get_line_from_file(file_path, line_number):
     except FileNotFoundError:
         return "File not found."
 
-# function for uploading and sorting all of the screenshots into an array
+# function for uploading and sorting all the screenshots into an array
 def Upload_images_from_folder(path):
     input_images = []
     files = os.listdir(path)
@@ -80,7 +77,7 @@ def Upload_images_from_folder(path):
             input_images.append(image)
     return input_images
 
-# function that checks if MBD is overlapping with a https://miro.com
+# function that checks if MBD is overlapping with https://miro.com
 def DoesOverlap(URL):
     window_list = gw.getWindowsWithTitle(URL)
     if len(window_list) > 0:
@@ -103,7 +100,7 @@ def ScanManual(width, height, path):
             GoDown(ssID, path)
             ssID += 1
 
-# function to merge all of the screenshots into one big image
+# function to merge all the screenshots into one big image
 def FinalMerge(height, width, path, path_final):
     input_images = Upload_images_from_folder(path)
 
@@ -122,9 +119,6 @@ def FinalMerge(height, width, path, path_final):
     output_image = f"{path_final}FinalScan.png"
     output_vimage = pyvips.Image.arrayjoin(rearranged_images, across=width, shim=0, background=[0, 0, 0])
     output_vimage.write_to_file(output_image)
-    print("Done!")
-
-
 
 
 
